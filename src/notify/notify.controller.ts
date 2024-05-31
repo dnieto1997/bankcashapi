@@ -1,34 +1,34 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { NotifyService } from './notify.service';
-import { CreateNotifyDto } from './dto/create-notify.dto';
-import { UpdateNotifyDto } from './dto/update-notify.dto';
+import { CreateKey2payNotifyDto } from './dto/create-notify.dto';
+import { CreateNotifyTopppay } from './dto/create-notify-toppay.dto';
+import { CreateNotifyKey2payPayoutResponseDTO } from './dto/create-notify-key2pay-payout-response.dto';
 
 @Controller('notify')
 export class NotifyController {
   constructor(private readonly notifyService: NotifyService) {}
 
-  @Post()
-  create(@Body() createNotifyDto: CreateNotifyDto) {
-    return this.notifyService.create(createNotifyDto);
+  @Post('response-key2pay-paying')
+  createResponseKey2payPaying(@Body() createNotifyDto: CreateKey2payNotifyDto) {
+    return this.notifyService.createResponsekey2pay(createNotifyDto);
   }
 
-  @Get()
-  findAll() {
-    return this.notifyService.findAll();
+  @Post('response-key2pay-collection')
+  createResponseKey2payCollection(
+    @Body() createNotifyDto: CreateKey2payNotifyDto,
+  ) {
+    return this.notifyService.createResponsekey2Collection(createNotifyDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.notifyService.findOne(+id);
+  @Post('response-key2pay-payout')
+  createResponseKey2payPayout(
+    @Body() createNotifyDto: CreateNotifyKey2payPayoutResponseDTO,
+  ) {
+    return this.notifyService.createResponsekey2Payout(createNotifyDto);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateNotifyDto: UpdateNotifyDto) {
-    return this.notifyService.update(+id, updateNotifyDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.notifyService.remove(+id);
+  @Post('response-toppay')
+  createResponseToppay(@Body() createNotifyTopppay: CreateNotifyTopppay) {
+    return this.notifyService.defineResponseOfToppay(createNotifyTopppay);
   }
 }

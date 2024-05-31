@@ -1,60 +1,76 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
-  Patch,
+  Get,
   Param,
-  Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+
 import { TransactionsService } from './transactions.service';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
-import { Account } from 'src/account/entities/account.entity';
 import { UserRols } from 'src/users/enums/user-rol.enum';
-import { ApiBearerAuth, ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
+import { User } from 'src/users/entities/user.entity';
+import { CreatePay } from './dto/create-paying.dto';
+import { CreateKey2Pay } from './dto/create-key2pay-pay.dto';
 
 @ApiTags('Transactions')
 @ApiBearerAuth()
-@Auth(UserRols.CLIENT, UserRols.ADMIN)
+@Auth(UserRols.CLIENT, UserRols.ADMIN, UserRols.SUPERADMIN)
 @Controller('transactions')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
-  @Post()
-  create(
-    @Body() createTransactionDto: CreateTransactionDto,
-    @GetUser('account') account: Account,
-  ) {
-    return this.transactionsService.create(createTransactionDto, account);
-  }
+  // @Post('key2pay-paying')
+  // createKey2PayPaying(
+  //   @Body() createTransactionDto: CreateKey2Pay,
+  //   @GetUser() user: User,
+  // ) {
+  //   return this.transactionsService.createkey2payPaying(
+  //     createTransactionDto,
+  //     user,
+  //   );
+  // }
 
-  @ApiExcludeEndpoint()
+  // @Post('key2pay-collection')
+  // createKey2PayCollection(
+  //   @Body() createTransactionDto: CreateKey2Pay,
+  //   @GetUser() user: User,
+  // ) {
+  //   return this.transactionsService.createCollection(
+  //     createTransactionDto,
+  //     user,
+  //   );
+  // }
+
   @Get()
-  findAll() {
-    return this.transactionsService.findAll();
+  findTransactions(@GetUser() user: User) {
+    return this.transactionsService.findAll(user);
   }
 
-  @ApiExcludeEndpoint()
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.transactionsService.findOne(+id);
+  @Get('of-the-admin/:idUser')
+  findTransactionsOfAdmin(@Param('idUser', ParseIntPipe) idUser: number) {
+    return this.transactionsService.findAllOfAdmin(idUser);
   }
 
-  @ApiExcludeEndpoint()
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateTransactionDto: UpdateTransactionDto,
+  @Post('paying')
+  createToppayPaying(
+    @Body() createToppayPaying: CreatePay,
+    @GetUser() user: User,
   ) {
-    return this.transactionsService.update(+id, updateTransactionDto);
+    return this.transactionsService.createPaying(createToppayPaying, user);
   }
 
-  @ApiExcludeEndpoint()
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.transactionsService.remove(+id);
+  @Post('collection')
+  createKey2PayCollection(
+    @Body() createTransactionDto: CreateKey2Pay,
+    @GetUser() user: User,
+  ) {
+    return this.transactionsService.createCollection(
+      createTransactionDto,
+      user,
+    );
   }
 }

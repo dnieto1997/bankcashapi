@@ -1,5 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNumber, IsString, MinLength } from 'class-validator';
+import { Transform } from 'class-transformer';
+import {
+  IsEmail,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+  MinLength,
+} from 'class-validator';
+import { UserStatus } from 'src/users/enums';
 
 export class CreateUserDto {
   @ApiProperty()
@@ -30,15 +40,20 @@ export class CreateUserDto {
   @IsString()
   cellphone: string;
 
-  @ApiProperty()
   @IsNumber()
+  @Transform(({ value }) => Number(value))
   country: number;
 
-  @ApiProperty()
-  @IsString()
-  city: string;
+  @IsNumber()
+  @Transform(({ value }) => Number(value))
+  typeDocument: number;
 
-  @ApiProperty()
-  @IsString()
-  address: string;
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  idUserRole?: number;
+
+  @IsOptional()
+  @IsEnum(UserStatus)
+  status?: UserStatus;
 }

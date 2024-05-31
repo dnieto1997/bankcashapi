@@ -1,18 +1,19 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { AccountStatus } from '../enums';
 import { User } from 'src/users/entities/user.entity';
 import { Transaction } from 'src/transactions/entities/transaction.entity';
 import { DigitalCard } from 'src/products/digital-card/entities/digital-card.entity';
 import { AccountRole } from './account-role.entity';
-import { AccountBalance } from './account-balance.entity';
 
 @Entity()
 export class Account {
@@ -31,11 +32,17 @@ export class Account {
   })
   balance: string;
 
-  @Column('timestamp', {
-    default: () => 'CURRENT_TIMESTAMP',
-    name: 'created_date',
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamp',
   })
-  createdDate: Date;
+  createdAt: Date;
+
+  @UpdateDateColumn({
+    name: 'updated_at',
+    type: 'timestamp',
+  })
+  updatedAt: Date;
 
   @Column('enum', {
     enum: AccountStatus,
@@ -51,14 +58,20 @@ export class Account {
   @OneToOne(() => User, (user) => user.account)
   user: User;
 
-  @OneToMany(() => Transaction, (transaction) => transaction.account)
-  transactions: Transaction[];
+  @OneToMany(() => Transaction, (transaction) => transaction.sourceAccount)
+  sourceTransactions: Transaction[];
+
+  @OneToMany(() => Transaction, (transaction) => transaction.targetAccount)
+  targetTransactions: Transaction[];
 
   @OneToMany(() => DigitalCard, (digitalCard) => digitalCard.account)
   digitalCard: DigitalCard[];
 
-  @OneToMany(() => AccountBalance, (accountBalance) => accountBalance.account)
-  accountBalance: AccountBalance;
+  // @OneToMany(() => AccountBalance, (accountBalance) => accountBalance.account, {
+  //   cascade: true,
+  //   // eager: true,
+  // })
+  // accountBalance: AccountBalance[];
 
   @ManyToMany(() => AccountRole)
   @JoinTable({

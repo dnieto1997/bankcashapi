@@ -5,11 +5,11 @@ import {
   Matches,
   MinLength,
 } from 'class-validator';
-import { TypeTransaction } from '../enums/type-transaction.enum';
+import { TypeTransactionEnum } from '../enums/type-transaction.enum';
 
 export class CreateTransactionDto {
-  @IsEnum(TypeTransaction)
-  typeTransaction: TypeTransaction;
+  @IsEnum(TypeTransactionEnum)
+  typeTransaction: TypeTransactionEnum;
 
   @IsString()
   @Matches(/^[+1-9]{1}[+0-9]*$/)

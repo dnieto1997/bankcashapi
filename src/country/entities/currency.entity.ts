@@ -1,4 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class Currency {
@@ -11,10 +17,20 @@ export class Currency {
   })
   code: string;
 
+  // @Column('varchar', {
+  //   unique: true,
+  //   length: 191,
+  // })
+  // name: string;
+
   @Column('varchar', {
-    name: 'currency_name',
-    unique: true,
-    length: 191,
+    name: 'exchange_value',
   })
-  currencyName: string;
+  exchangeValue: string;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 }

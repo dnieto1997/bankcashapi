@@ -8,8 +8,6 @@ import {
   Delete,
   ParseIntPipe,
   Put,
-  HttpStatus,
-  HttpCode,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -19,51 +17,73 @@ import { CreateUserDto } from 'src/auth/dto';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from './entities/user.entity';
 import { UserChangePasswordDto } from './dto/user-change-password.dto';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiExcludeEndpoint,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import { UserRols } from './enums/user-rol.enum';
+import { ApiBearerAuth, ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
+import { CheckExistenceDto } from './dto/check-existence.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth()
-@Auth(UserRols.ADMIN, UserRols.CLIENT)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @ApiExcludeEndpoint()
+  @Auth()
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
-  @ApiExcludeEndpoint()
-  @Get()
-  @Auth()
-  findAll(@GetUser() user: User) {
-    return this.usersService.findAll(user);
+  @Post('check-existence')
+  checkExistence(@Body() checkExist: CheckExistenceDto) {
+    return this.usersService.checkExistence(checkExist);
   }
 
   @ApiExcludeEndpoint()
+  @Get()
+  @Auth()
+  findAll() {
+    return this.usersService.findAll();
+  }
+
+  @Auth()
+  @Get('find-all-admin')
+  findAllAdmin() {
+    return this.usersService.findAllAmdin();
+  }
+
+  @Auth()
+  @Get('find-all-to-superadmin')
+  getAllTosuperAdmin() {
+    return this.usersService.getAllToSuperAdmin();
+  }
+
+  @Get('type-documents')
+  getTypeDocuments() {
+    return this.usersService.getTypeDocuments();
+  }
+
+  @ApiExcludeEndpoint()
+  @Auth()
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.findOne(id);
   }
 
   @ApiExcludeEndpoint()
+  @Auth()
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.usersService.update(id, updateUserDto);
   }
 
-  @ApiResponse({ status: HttpStatus.NO_CONTENT })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST })
-  @ApiBody({ type: UserChangePasswordDto })
-  @HttpCode(HttpStatus.NO_CONTENT)
+  // @ApiResponse({ status: HttpStatus.NO_CONTENT })
+  // @ApiResponse({ status: HttpStatus.BAD_REQUEST })
+  // @ApiBody({ type: UserChangePasswordDto })
+  // @HttpCode(HttpStatus.NO_CONTENT)
+  @Auth()
   @Put('change-password')
   changePassword(
     @Body() userChangePasswordDto: UserChangePasswordDto,
@@ -73,6 +93,7 @@ export class UsersController {
   }
 
   @ApiExcludeEndpoint()
+  @Auth()
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);

@@ -10,6 +10,21 @@ import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { User } from 'src/users/entities/user.entity';
 import { UserStatus } from 'src/users/enums';
 
+// Esta función extrae el token de las cookies
+const cookieExtractor = (req) => {
+  let token = null;
+  if (req && req.cookies) {
+    token = req.cookies['jwt'];
+  }
+  return token;
+};
+
+// Esta función combina dos extractores
+const customExtractor = ExtractJwt.fromExtractors([
+  ExtractJwt.fromAuthHeaderAsBearerToken(),
+  cookieExtractor,
+]);
+
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     @InjectRepository(User)
@@ -18,17 +33,20 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       secretOrKey: configService.get<string>('JWT_SECRET'),
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: customExtractor,
     });
   }
   async validate(jwtPayload: JwtPayload) {
     const { numDocument } = jwtPayload;
 
     const user = await this.userRepository.findOne({
-      where: { numDocument },
+      where: {
+        numDocument,
+      },
       relations: {
         account: true,
-        country: true,
+        role: true,
+        // country: true,
       },
     });
 

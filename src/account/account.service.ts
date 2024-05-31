@@ -19,6 +19,10 @@ export class AccountService {
     private readonly account: Repository<Account>,
   ) {}
 
+  async findOneBalance(account: Account) {
+    return { balance: account.balance };
+  }
+
   create(createAccountDto: CreateAccountDto) {
     return 'This action adds a new account';
   }

@@ -2,11 +2,14 @@ import {
   AfterLoad,
   BeforeInsert,
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserStatus } from '../enums';
@@ -14,7 +17,10 @@ import { UserRole } from './user-role.entity';
 import { capitalize } from '../../common/helpers/capitalize.helper';
 import { Account } from 'src/account/entities/account.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { CashOutRequests } from 'src/cash-out-requests/entities/cash-out-request.entity';
 import { Country } from 'src/country/entities';
+import { TypeDocument } from './type-document.entity';
+// import { Country } from 'src/country/entities';
 
 @Entity('users')
 export class User {
@@ -38,6 +44,11 @@ export class User {
   })
   numDocument: number;
 
+  @Column('varchar', {
+    name: 'url_document',
+  })
+  urlDocument: string;
+
   @ApiProperty()
   @Column('varchar', {
     unique: true,
@@ -57,48 +68,69 @@ export class User {
   password: string;
 
   @ApiProperty()
-  @Column('timestamp', {
-    default: () => 'CURRENT_TIMESTAMP',
-    name: 'created_date',
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamp',
   })
-  createdDate: Date;
+  createdAt: Date;
+
+  @UpdateDateColumn({
+    name: 'updated_at',
+    type: 'timestamp',
+  })
+  updatedAt: Date;
 
   @ApiProperty()
   @Column('enum', {
     enum: UserStatus,
-    default: UserStatus.ACTIVE,
+    default: UserStatus.INACTIVE,
   })
   status: UserStatus;
 
-  @ApiProperty()
-  @Column('varchar')
-  city: string;
+  // @ApiProperty()
+  // @Column('varchar')
+  // city: string;
 
-  @ApiProperty()
-  @Column('varchar')
-  address: string;
+  // @ApiProperty()
+  // @Column('varchar')
+  // address: string;
 
-  @ManyToOne(() => Country, (country) => country.user, {
-    eager: true,
-  })
-  @JoinColumn({ name: 'id_country' })
-  country: Country;
+  // @Column('varchar')
+  // postcode: string;
+
+  // @ManyToOne(() => Country, (country) => country.user, {
+  //   eager: true,
+  // })
+  // @JoinColumn({ name: 'id_country' })
+  // country: Country;
 
   public get fullName(): string {
     return `${this.names} ${this.surnames}`;
   }
 
   @ManyToOne(() => UserRole, (role) => role.user, {
-    eager: true,
+    // eager: true,
   })
   @JoinColumn({ name: 'id_user_role' })
   role: UserRole;
 
   @OneToOne(() => Account, (account) => account.user, {
+    // eager: true,
     cascade: true,
   })
   @JoinColumn({ name: 'id_account' })
   account: Account;
+
+  @OneToMany(() => CashOutRequests, (cashOutRequests) => cashOutRequests.user)
+  cashOutRequests: CashOutRequests;
+
+  @ManyToOne(() => Country, (country) => country.users)
+  @JoinColumn({ name: 'id_country' })
+  country: Country;
+
+  @ManyToOne(() => TypeDocument, (typeDocument) => typeDocument.users)
+  @JoinColumn({ name: 'id_type_document' })
+  typeDocument: TypeDocument;
 
   @BeforeInsert()
   checkBeforeInsert() {
