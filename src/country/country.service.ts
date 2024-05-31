@@ -62,7 +62,6 @@ export class CountryService {
 
   async getCountries() {
     const countries = await this.countryRepository.find();
-    console.log(countries);
     return countries;
   }
 

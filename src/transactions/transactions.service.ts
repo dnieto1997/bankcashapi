@@ -330,9 +330,7 @@ export class TransactionsService {
     //   },
     // });
 
-    const countries = await this.key2payAuthService.getCountries();
-
-    console.log('@@@@@@@@@', countries);
+    /*   const countries = await this.key2payAuthService.getCountries();
 
     if (
       !checkCurrencyByCountry(
@@ -342,7 +340,7 @@ export class TransactionsService {
       )
     ) {
       throw new BadRequestException('Invalid Currency');
-    }
+    }  */
 
     // if (createPaying.currency.length == 0) {
     //   throw new BadRequestException('Currency is required');
