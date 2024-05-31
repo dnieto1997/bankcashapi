@@ -33,17 +33,19 @@ export class Country {
 
   @Column('varchar', {
     name: 'currency_name',
-    nullable: true,
+    default: true,
   })
   currencyName: string;
 
   @Column('varchar', {
     name: 'flag_png',
+    default: true,
   })
   flagPng: string;
 
   @Column('varchar', {
     name: 'flag_svg',
+    default: true,
   })
   flagSvg: string;
 

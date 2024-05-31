@@ -4,6 +4,7 @@ import { UserRole } from 'src/users/entities/user-role.entity';
 import { Repository } from 'typeorm';
 import {
   ACCOUNT_ROLE_SEED,
+  COUNTRIES_SEED,
   // COUNTRIES_SEED,
   USERS_SEED,
   USER_ROL_SEED,
@@ -12,6 +13,7 @@ import {
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 import { AccountRole } from 'src/account/entities/account-role.entity';
+import { Country } from 'src/country/entities';
 
 @Injectable()
 export class SeedService {
@@ -22,8 +24,8 @@ export class SeedService {
     @InjectRepository(UserRole)
     private readonly UserRolRepository: Repository<UserRole>,
 
-    // @InjectRepository(Country)
-    // private readonly countryRepository: Repository<Country>,
+    @InjectRepository(Country)
+    private readonly countryRepository: Repository<Country>,
 
     @InjectRepository(AccountRole)
     private readonly accountRoleRepository: Repository<AccountRole>,
@@ -36,9 +38,9 @@ export class SeedService {
     // await this.deleteTables();
     await this.insertUserRole();
     await this.insertAccountRole();
-    // await this.insertCountries();
+    await this.insertCountries();
     await this.insertUsers();
-    // await this.activarForeignKey();
+    await this.activarForeignKey();
   }
 
   async disableForeignKey(): Promise<void> {
@@ -58,7 +60,7 @@ export class SeedService {
 
     await this.UserRolRepository.clear();
 
-    // await this.countryRepository.clear();
+    await this.countryRepository.clear();
   }
 
   async insertUserRole() {
@@ -73,17 +75,17 @@ export class SeedService {
     await this.UserRolRepository.save(userRols);
   }
 
-  // async insertCountries() {
-  //   const seedCountries = COUNTRIES_SEED;
+  async insertCountries() {
+    const seedCountries = COUNTRIES_SEED;
 
-  //   const countries: Country[] = [];
+    const countries: Country[] = [];
 
-  //   seedCountries.forEach((country) =>
-  //     countries.push(this.countryRepository.create(country)),
-  //   );
+    seedCountries.forEach((country) =>
+      countries.push(this.countryRepository.create(country)),
+    );
 
-  //   await this.countryRepository.save(countries);
-  // }
+    await this.countryRepository.save(countries);
+  }
 
   async insertUsers() {
     const seedUsers = USERS_SEED;
@@ -109,5 +111,3 @@ export class SeedService {
     await this.accountRoleRepository.save(accountRols);
   }
 }
-
-// va a ver todo lo que se recaude y aprobar retiro

@@ -46,6 +46,7 @@ export class User {
 
   @Column('varchar', {
     name: 'url_document',
+    default: true,
   })
   urlDocument: string;
 
