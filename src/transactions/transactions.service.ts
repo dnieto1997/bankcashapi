@@ -296,10 +296,10 @@ export class TransactionsService {
       ) &&
       createPaying.currency !== Currency.USD
     ) {
-      // const currency: Currency | string = '';
-      // if (createPaying.country == CountryEnum.CO) {
-      //   createPaying.currency = 'COL';
-      // }
+      const currency: Currency | string = '';
+      if (createPaying.country == CountryEnum.CO) {
+        createPaying.currency = 'COP';
+      }
 
       if (createPaying.country == CountryEnum.PE) {
         createPaying.currency = 'SOL';
@@ -332,6 +332,8 @@ export class TransactionsService {
 
     const countries = await this.key2payAuthService.getCountries();
 
+    console.log('@@@@@@@@@', countries);
+
     if (
       !checkCurrencyByCountry(
         countries,
@@ -352,9 +354,9 @@ export class TransactionsService {
       ) &&
       createPaying.currency !== Currency.USD
     ) {
-      // if (createPaying.country == CountryEnum.CO) {
-      //   createPaying.currency = 'COL';
-      // }
+      if (createPaying.country == CountryEnum.CO) {
+        createPaying.currency = 'COP';
+      }
 
       if (createPaying.country == CountryEnum.PE) {
         createPaying.currency = 'SOL';
