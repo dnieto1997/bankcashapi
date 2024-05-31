@@ -7,5 +7,7 @@ export const checkCurrencyByCountry = (
 ) => {
   const countryFound = countries.find((c) => c.country === country);
 
+  console.log('@@@@@@@q', countryFound);
+
   return countryFound.currencies.includes(currency);
 };

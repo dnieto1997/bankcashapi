@@ -62,6 +62,7 @@ export class CountryService {
 
   async getCountries() {
     const countries = await this.countryRepository.find();
+    console.log(countries);
     return countries;
   }
 
@@ -193,7 +194,6 @@ export class CountryService {
         })
         .getOne();
 
-      console.log('moneda');
       if (!currency) {
         // console.log('moneda no se obtuvo');
         const data = await this.getCurrency(currencyCode, amount);
